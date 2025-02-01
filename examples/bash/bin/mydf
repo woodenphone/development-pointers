@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+## mydf
+## A convenient df invocation wrapper with optional logging.
+## ==================================== ##
+## ENVIRONMENT:
+## To set history file location:
+## * export MYDF_HISTORY_FILE="${HOME}/.mydf_history"
+##
+## To disable history, set environment variable to empty string or null.
+## * export MYDF_HISTORY_FILE=""
+## * export MYDF_HISTORY_FILE=
+## ==================================== ##
+## LICENSE: BSD0
+## AUTHOR: Ctrl-S
+## CREATED: 2023-11-08
+## MODIFIED: 2024-09-29
+## ==================================== ##
+## df --local --total --human-readable --exclude-type=devtmpfs --exclude-type=tmpfs "$@"
+
+## ==========< Shell setup >========== ##
+## Safety rails for shell scripting.
+## * https://www.gnu.org/software/bash/manual/html_node/The-Set-Builtin.html
+# set -o noclobber  # Avoid overlay files (echo "hi" > foo)
+set -o errexit    # Used to exit upon error, avoiding cascading errors
+set -o pipefail   # Unveils hidden failures
+# set -o nounset    # Exposes unset variables
+# PATH="$HOME/.local/bin:$HOME/bin:$HOME/.local/bin:$HOME/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin"
+## Tracing
+# set -o verbose ## Print shell input lines as they are read. (set -v)
+# set -o xtrace # Print a trace of simple commands. (set -x) (Uses $PS4)
+# PS4='+ ' # Default value.
+# PS4='+ $LINENO: ' # Print line number in xtrace.
+# PS4='+ ${BASH_SOURCE[0]:-}|${FUNCNAME[0]:-}()@${BASH_LINENO[0]:-}:ln${LINENO:-} ' ## i.e. '+ FILE|FUNC()@FUNC_LINENO:CURRENT_LINENO '
+# PS4='+ ${BASH_SOURCE[0]:-}|ln${LINENO:-} ' ## i.e. '+ FILE|CURRENT_LINENO '
+## ==========< /Shell setup >========== ##
+
+
+## Config via environment variable(s):
+## If var is unset, null, or empty, set var to default value:
+# [ -z "${MYDF_HISTORY_FILE}" ] && MYDF_HISTORY_FILE="${HOME}/.mydf_history" ## Default to ~/.mydf_history
+[ -z "${MYDF_HISTORY_FILE}" ] && MYDF_HISTORY_FILE="" ## Default to no log.
+
+
+{	## Wrapped as block to capture output.
+	argv=( "$@" );  printf '%s\n' "[${0##*/}] at ($(date -Is)) argc=${#argv[*]}; argv=(${argv[*]@Q});" ## Print script name, time, and CLI params.
+
+	## Prepare params for df
+	params=(
+		## df
+		--local ## 'limit listing to local file systems'
+		--total ## 'produce a grand total'
+		--print-type ## 'print file system type'
+		--human-readable ## 'print sizes in powers of 1024 (e.g., 1023M)'
+		--exclude-type=devtmpfs ## no /dev /run /run/user/1000 ...
+		--exclude-type=tmpfs ## no /tmp ; 
+		--exclude-type=squashfs ##  
+	)
+	if [[ $# -ne 0 ]]; then
+		## Append script arguments if any were given.
+		params=(
+			"${params[@]}"
+			"$@"
+		)
+	fi
+	printf '%s\n' "params=( ${params[*]@Q} );"
+
+	# Capture df output and immediately print it out
+	IFS=
+	df_output=(
+		$(df "${params[@]}")
+	)
+	printf '%s\n' "${df_output}"
+
+	## Calculate and print number of non-header non-footer lines.
+	num_results=$( printf '%s\n' "${df_output}" | tail --lines=+2 | head --lines=-1 | wc --lines )
+	printf '%s\n' "(Listed ${num_results} mounts)"
+
+} | tee -a "${MYDF_HISTORY_FILE:-/dev/null}" ## Record STDOUT to file unless if env var is null or empty.
+
+exit

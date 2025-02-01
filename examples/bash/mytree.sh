@@ -1,0 +1,105 @@
+#!/usr/bin/env bash
+## mytree
+## ~/bin/mytree
+## mytree.sh (on Windows)
+## Remember my preferred invocation of tree.
+## ==================================== ##
+## USAGE: $0 [TREE_PARAMS...]
+## CLI params given to this script are simply appended to the tree command to run.
+## ==================================== ##
+## LINKS:
+## * https://man.archlinux.org/man/tree.1.en
+## * https://www.man7.org/linux/man-pages/man3/strftime.3.html
+## * https://www.man7.org/linux/man-pages/man3/strftime.3p.html
+## ==================================== ##
+## LICENSE: BSD
+## AUTHOR: Ctrl-S
+## CREATED: 2024-06-29
+## MODIFIED: 2024-06-29
+## ==================================== ##
+
+
+## ----------< BASH environment setup >---------- ##
+## Configure BASH behavior for this script.
+##
+## Explicit PATH declaration; avoids user custom PATH for portability.
+# PATH="/usr/lib64/ccache:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin"
+##
+## BASH options to protect against buggy scripting:
+# set -o noclobber  # Avoid overlay files (echo "hi" > foo)
+set -o errexit    # Used to exit upon error, avoiding cascading errors
+set -o pipefail   # Unveils hidden failures
+set -o nounset    # Exposes unset variables
+##
+## Debugging / development aid options:
+# BASH_XTRACEFD="" ## File descriptor to write xtrace to, default when unset is STDERR.
+# PS4="+${0##*/}:${LINENO} " # Prefix used for (-x | -o xtrace), first char is repeated to indicate depth / indirection.
+# set -o xtrace # Print a trace of simple commands before they are executed; prefixed by PS4. (-x | -o xtrace).
+# set -o verbose # Print shell input lines as they are read. (-v | -o verbose)
+##
+## LINKS:
+## * https://www.gnu.org/software/bash/manual/html_node/The-Set-Builtin.html
+## * https://www.gnu.org/software/bash/manual/html_node/Bash-Variables.html
+## ----------< /BASH environment setup >---------- ##
+
+
+cmd_array=( ## As array var to permit commenting.
+	time ## Record time to scan dirs.
+	/usr/bin/tree ## Executable to run.
+	##
+	## [LISTING OPTIONS]
+	-a ## All files are printed.
+	-f ## Prints the full path prefix for each file.
+	-L 5 ## Max display depth of the directory tree.
+	-x ## Stay on the current file-system only.
+	--metafirst ## Print the meta-data information at the beginning of the line rather than after the indentation lines.
+	# --noreport ## Omits printing of the file and directory report at the end of the tree listing.
+	--filelimit=50 ## Do not descend directories that contain more than # entries.
+	--timefmt="%Y-%m-%dT%H:%M:%S%z" ## Prints (implies -D) and formats the date according to the format string which uses the strftime(3) syntax.
+	## $ date -u "%Y-%m-%d %H:%M:%S %z" --> "2024-06-29 04:20:22 +0000"
+	# -o filename ## Send output to filename.
+	##
+	## [FILE OPTIONS]
+	-Q ## Quote the names of files in double quotes.
+	-p ## Print the file type and permissions for each file (as per ls -l).
+	-u ## Print the username, or UID # if no username is available, of the file.
+	-g ## Print the group name, or GID # if no group name is available, of the file.
+	# -s ## Print the size of each file in bytes along with the name.
+	-h ## Print the size of each file but in a more human readable way.
+	-D ## Print the date of the last modification time or if -c is used, the last status change time for the file listed.
+	--du ## For each directory report its size as the accumulation of sizes of all its files and sub-directories (and their files, and so on). The total amount of used space is also given in the final report (like the 'du -c' command.)	
+	-F ## Append a `/' for directories, a `=' for socket files, a `*' for executable files, a `>' for doors (Solaris) and a `|' for FIFO's, as per ls -F
+	##
+	## [SORTING OPTIONS]
+	# -v ## Sort the output by version.
+	# -t ## Sort the output by last modification time instead of alphabetically.
+	# -c ## Sort the output by last status change instead of alphabetically. Modifies the -D option (if used) to print the last status change instead of modification time.
+	# -U ## Do not sort. Lists files in directory order. Disables --dirsfirst.
+	# -r ## Sort the output in reverse order. This is a meta-sort that alter the above sorts. This option is disabled when -U is used.
+	--dirsfirst ## List directories before files. This is a meta-sort that alters the above sorts. This option is disabled when -U is used.
+	# --filesfirst ## List files before directories. This is a meta-sort that alters the above sorts. This option is disabled when -U is used.
+	--sort=mtime ## Sort the output by type instead of name. Possible values are: ctime (-c), mtime (-t), size, or version (-v). 
+	##
+	## [GRAPHICS OPTIONS]
+	-i ## No indentation lines.
+	-C ## Colorize output always.
+	##
+)
+
+## CLI param passthrough:
+if [[ $# -ne 0 ]]; then # If CLI params given to script.
+	cmd_array=("${cmd_array[@]}" "$@") ## Append CLI params to array.
+fi
+
+## Informative header:
+echo "#[${0##*/}] Starting at $(date -Is)" >&2 # Note start time.
+echo "#[${0##*/}] params=( ${*@Q} )" >&2 # Print shellescaped invocation params array.
+echo "#[${0##*/}] cmd_array=( ${cmd_array[@]@Q} )" >&2 # Print shellescaped command to run.
+echo "${cmd_array[@]@Q}" > "${0##*/}.cmd" # Stash command into a file.
+
+## Main functionality of this script, running the prepared command:
+"${cmd_array[@]}" # Execute command from array var.
+
+
+echo "#[${0##*/}] End of script at $(date -Is)" >&2 # Note start time.
+exit # Explicit end of script, pass through last exit status.

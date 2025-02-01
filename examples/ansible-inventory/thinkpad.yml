@@ -1,0 +1,13 @@
+---
+all:
+  hosts:
+    'thinkpad':
+      ansible_host: "10.1.1.69"
+      ansible_port: "5986" # WinRM HTTPS
+      ansible_connection: winrm
+      ansible_winrm_transport: basic # Username+password
+      ansible_winrm_server_cert_validation: "ignore" # Permit basic username+password auth.
+      ansible_user: ansible # Login over network as this account.
+      ansible_become_method: "runas" # Make 'become:' work with windows.
+      ansible_become_user: "ansible" # Superuser account.
+      ansible_become_flags: "logon_type=batch" # Batch for unattended.

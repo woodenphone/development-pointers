@@ -1,0 +1,18 @@
+## backups.my.cnf
+## /root/mysql-backups/backups.my.cnf
+## mariadb user connection / login config file
+## Secure alternative to passing credentials as commandline params.
+## ======================================== ##
+## EXAMPLE:
+## == DB dump simple example ==
+## e.g. $ mysqldump --defaults-extra-file="backups.my.cnf" DATABASE_NAME | gzip > dump.sql
+## $ mysqldump --defaults-extra-file="backups.my.cnf" DATABASE_NAME | gzip > "$(date +%Y-%m-%d_%H-%M%z).sql"
+## $ mysqldump --defaults-extra-file="backups.my.cnf" --all-databases | gzip > "$(date +%Y-%m-%d_%H-%M%z).sql"
+## ======================================== ##
+
+
+## This will be passed to all MariaDB clients
+[client]
+#host=localhost
+user="backups"
+password="PASSPHRASE_REMOVED"

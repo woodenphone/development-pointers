@@ -1,0 +1,15 @@
+## playbook.yml
+## Dummy for demonstration purposes.
+## TODO: WRITEME
+- name: "Demonstration dummy playbook"
+  hosts: "all"
+  vars:
+    var1: "foo"
+  tasks:
+    - name: "Ping localhost"
+      ansible.builtin.ping:
+      
+    - name: "Ping target host from inventory"
+      ansible.builtin.ping:
+
+

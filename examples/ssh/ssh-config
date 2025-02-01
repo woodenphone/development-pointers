@@ -1,0 +1,8 @@
+## ~/.ssh/config
+## SSH hosts
+## https://man.openbsd.org/ssh_config.5
+## https://www.man7.org/linux/man-pages/man5/ssh_config.5.html
+
+
+## Include per-host config files in subdir:
+Include ~/.ssh/config.d/*.conf

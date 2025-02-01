@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+## myiftop
+## Run iftop, filtered to only count non-LAN traffic.
+## (i.e. exclude rfc1918 address ranges).
+## ======================================== ##
+date -Is >&2
+sudo time iftop -ubytes -f 'not broadcast and not multicast and ( (outbound and (not dst net 10.0.0.0/8 or dst net 172.16.0.0/20 or dst net 192.168.0.0/16)) or (inbound and (not src net 10.0.0.0/8 or src net 172.16.0.0/20 or src net 192.168.0.0/16)) )'
+date -Is >&2

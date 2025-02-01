@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+## mylsblk
+## A useful lsblk invocation.
+## ======================================== ##
+date -Is >&2
+lsblk -o NAME,SIZE,FSTYPE,LABEL,MODEL,SERIAL

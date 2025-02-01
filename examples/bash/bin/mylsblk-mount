@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+## mylsblk-mount
+## A useful lsblk invocation.
+## ======================================== ##
+date -Is >&2
+lsblk -o KNAME,SIZE,FSTYPE,LABEL,MOUNTPOINT

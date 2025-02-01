@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+## myip
+## Get IP address from outside perspective.
+## ======================================== ##
+date -Is >&2
+curl -w "\n" -s http://ipecho.net/plain

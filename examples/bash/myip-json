@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+## myip-json
+## Get IP address from outside perspective.
+## ======================================== ##
+date -Is >&2
+curl -w "\n" -s http://ifconfig.co/json

@@ -1,0 +1,19 @@
+## inventory/example-windows-target.yml
+## Inventory file with appropriate values for a Windows target
+---
+all:
+  hosts:
+    'example-windows-target': # Friendly name for this host
+      ansible_host: "10.1.1.69" # Network address
+      ansible_port: "5986" # (WinRM HTTPS port)
+      ansible_connection: winrm
+      ansible_winrm_server_cert_validation: "ignore"
+      # ansible_winrm_transport: basic # Login using password.
+      ansible_winrm_transport: certificate # Login using certificate.
+      ansible_user: "Ansible" # Login over network as this account.
+      ansible_password: "changeme-once-certs-work" # Password if applicable.
+      ansible_winrm_cert_pem: "files/certs/cert.pem" # Public key/cert, copy this to target.
+      ansible_winrm_cert_key_pem: "files/certs/cert_key.pem" # Secret key/cert, lives on controller
+      ansible_become_method: "runas" # Make 'become:' work with windows.
+      ansible_become_user: "Ansible" # Superuser account.
+      ansible_become_flags: "logon_type=batch" # Batch for unattended.

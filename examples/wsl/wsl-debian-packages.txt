@@ -1,0 +1,53 @@
+## wsl-deb-packages.txt
+## Commented list of packages.
+## Targeted for: WSL Debian
+
+## Editors:
+nano
+vim
+
+## Terminal multiplexing:
+screen
+tmux
+byobu
+
+## File transfer
+curl
+wget
+rsync
+
+## Docs:
+man-db
+
+## Python3:
+python3
+python3-pip
+
+## Perl:
+perl
+
+## misc basic utils:
+bash
+gawk
+grep
+sed
+tar
+
+
+## Compression
+#bzip2
+#bzip2-doc
+#bzip3
+gzip
+#lunzip
+#lzip
+p7zip-full
+#pbzip2
+#unzip
+
+
+## SSH
+ssh
+#openssh-client
+#openssh-server
+#openssh-sftp-server

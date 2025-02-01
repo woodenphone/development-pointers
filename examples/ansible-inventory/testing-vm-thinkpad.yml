@@ -1,0 +1,15 @@
+## windows11/inventory/testing-vm-thinkpad.yml
+## Ansible inventory file pointing at a test VM.
+## See: windows11/Vagrantfile
+---
+all:
+  hosts:
+    "testing-vm-thinkpad":
+      ansible_host: "192.168.56.41" # IP assigned to vagrant box.
+      ansible_port: "5986" # WinRM HTTPS port.
+      ansible_connection: winrm # Required for windows targets.
+      ansible_winrm_transport: basic # Username+password
+      ansible_winrm_server_cert_validation: "ignore"
+      ansible_become_method: "runas" # Windows uses runas.
+      ansible_runas_flags: "logon_type=batch" # Batch for unattended.
+      ansible_user: vagrant # User who can do admin tasks.

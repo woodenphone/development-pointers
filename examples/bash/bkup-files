@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+## bkup-files
+## Create a backup of many files next to the originals.
+## ==================================== ##
+## USAGE: ./$0 [FILE...]
+## ==================================== ##
+args=( "$@" ) # Make actual array to permit array operations.
+echo "[${0##*/}] args=${args[*]@Q}" >&2
+
+timestamp="$(date +%Y-%m-%dT%H%M%S%z)" # Filename-safe pseudo-ISO format.
+echo "[${0##*/}] timestamp=${timestamp@Q}" >&2
+
+for filepath in "${args[@]}"; do
+	if [[ -f $filepath ]]; then # Only regular files.
+		cp --verbose --archive "${filepath?}" "${filepath?}.${timestamp?}.backup"
+	fi
+done
+
+exit

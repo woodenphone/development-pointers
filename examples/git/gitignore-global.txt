@@ -1,0 +1,28 @@
+## .gitignore_global 
+## Global gitignore rules file.
+## ==================================== #
+## SETUP:
+## Windows:
+##   PS> git config --global core.excludesfile "${env:USERPROFILE}\.gitignore_global"
+## Linux: 
+##   $ git config --global core.excludesfile "${HOME}/.gitignore_global"
+## ==================================== ##
+## SEE ALSO:
+## * https://git-scm.com/book/en/v2/Customizing-Git-Git-Configuration
+## * https://git-scm.com/book/en/v2/Git-Basics-Recording-Changes-to-the-Repository#_ignoring
+## * https://git-scm.com/docs/gitignore
+## ==================================== ##
+
+
+## ==========< Editor: VSCode >========== ##
+## VSCode workspace dir
+.vscode/
+*.code-workspace
+## ==========< /Editor: VSCode >========== ##
+
+
+
+## ==========< Language: Python >========== ##
+## Temporary python ?bytecode?:
+*.pyc
+## ==========< /Language: Python >========== ##

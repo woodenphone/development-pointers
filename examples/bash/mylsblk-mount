@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+## mylsblk-mount
+## A useful lsblk invocation.
+## ==================================== ##
+## LICENSE: BSD
+## AUTHOR: Ctrl-S
+## CREATED: 2024-08-28
+## MODIFIED: 2023-11-24
+## ==================================== ##
+date -Is
+params=( ## $ lsblk
+	-o KNAME,SIZE,FSTYPE,LABEL,MOUNTPOINT
+)
+if [[ $# -ne 0 ]]; then ## Append script arguments if any were given.
+	params=( "${params[@]}" "$@" )
+fi
+lsblk "${params[@]}"
+## $ lsblk -o KNAME,SIZE,FSTYPE,LABEL,MOUNTPOINT
+exit

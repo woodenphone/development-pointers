@@ -1,0 +1,40 @@
+## backupuser.my.cnf
+## Backups user mysql config file.
+## https://mariadb.com/kb/en/configuring-mariadb-with-option-files/
+## 
+
+
+[client-server]
+# Uncomment these if you want to use a nonstandard connection to MariaDB
+#socket=/tmp/mysql.sock
+#port=3306
+
+
+# This will be passed to all MariaDB clients
+[client]
+username=backupuser
+password=my_password
+
+# https://mariadb.com/kb/en/mysqldump/
+[mysqldump]
+comments=TRUE
+tz-utc=TRUE
+single-transaction=TRUE
+skip-lock-tables=TRUE
+
+
+
+
+## == NOTES ==
+## All lines after this point should be comments.
+##
+## == Troubleshooting ==
+## To diagnose options effects: 
+## $ program --help --verbose
+## $ mysqldump --help --verbose
+##
+## 
+## == DB dump simple example ==
+## e.g. $ mysqldump --defaults-extra-file="backupuser.my.cnf" DATABASE_NAME | gzip > dump.sql
+## $ mysqldump --defaults-extra-file="backupuser.my.cnf" DATABASE_NAME | gzip > "$(date -).sql"
+##
