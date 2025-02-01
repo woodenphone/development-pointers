@@ -91,6 +91,81 @@ DESCRIPTION
 TODO
 ```
 
+## Remotes
+
+Listing remotes on git a repository:
+```bash
+git remote --verbose
+```
+
+To add a remote:
+```bash
+git remote add home-server "ssh://git@10.1.1.69:/~/my-project.git"
+```
+
+To push to a remote:
+```bash
+git push home-server
+```
+
+To remove a remote:
+```bash
+git remote remove home-server
+```
+
+* https://git-scm.com/docs/git-remote
+
+
+#### Setup basic homserver remote
+To init and push an exisitng repository to a home git server:
+
+Create bare repo to push to: (On server)
+```bash
+## As: dev@home-server:~$
+## Init bare repo on git server:
+## Alternative?: # sudo -u "git" git init --bare "/home/git/my-project.git"
+dev@home-server:~$ sudo -u git /usr/bin/bash
+git@home-server:~$ git init --bare development-pointers.public.git
+
+## Ensure client's pubkey is present:
+dev@home-server:~$ sudo -u "git" nano "/home/git/.ssh/authorized_keys"
+```
+
+Add reference to remote and push repo data: (On client / workstation)
+```bash
+## As dev@workstation:~/repos/my-project$
+## Add reference to remote to local git repository:
+git remote add home-server "ssh://git@10.1.1.69:/~/my-project.git"
+
+## Push repo to remote:
+git push home-server
+```
+
+
+----------
+
+
+
+### Creating bare repo 
+e.g. for lan server selfhosting
+
+Init bare repo:
+```bash
+git init --bare "/home/git/my-project.git"
+```
+
+Example: sudo into git account to init bare repo on git server:
+```bash
+$ sudo -u "git" git init --bare "/home/git/my-project.git"
+```
+
+Add remote to reference server:
+```bash
+~/repos/my-project$ git remote add origin "ssh://git@10.1.1.69:/~/my-project.git"
+```
+
+----------
+
 
 ## Authentication
 * TODO: ssh auth
@@ -202,4 +277,8 @@ Relevant files included in this repo.
 ### Unsorted links
 *[""]()
 *[""]()
+
+https://docs.github.com/en/get-started/getting-started-with-git/configuring-git-to-handle-line-endings
+https://docs.github.com/en/get-started/getting-started-with-git/managing-remote-repositories
+
 
