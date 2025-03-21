@@ -1,6 +1,7 @@
 # Windows CLSIDs 
 Windows uses an identifier value called a CLSID ... TODO
 
+* TODO: understand and document workings of file Thumbnails.
 
 * ["CLSID Key" (learn.microsoft.com)](https://learn.microsoft.com/en-us/windows/win32/com/clsid-key-hklm)
  and its [document source in "MicrosoftDocs/win32" (github repo)](https://github.com/MicrosoftDocs/win32/blob/docs/desktop-src/com/clsid-key-hklm.md)
@@ -238,7 +239,7 @@ PowerShell: Formattin and conversiong:
 
 ----------
 Powershell: Misc
-* ["DOCNAME" (PowerShell docs)](LINK)
+* ["Low-Level Windows API Access From PowerShell" (fuzzysecurity.com)](https://fuzzysecurity.com/tutorials/24.html)
 * ["DOCNAME" (PowerShell docs)](LINK)
 * ["DOCNAME" (PowerShell docs)](LINK)
 * ["DOCNAME" (PowerShell docs)](LINK)

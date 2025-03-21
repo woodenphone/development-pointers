@@ -87,7 +87,9 @@ Genrerally considered to be authoratative enough.
 
 ## Wifi / 802.11 / wlan
 
-
+## Ratelimiting / throttling
+* https://batmat.net/2018/10/05/throttle-network-bandwidth-on-linux/
+* https://www.baeldung.com/linux/throttle-bandwidth
 
 # Unsorted links
 

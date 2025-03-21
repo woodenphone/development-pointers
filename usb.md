@@ -21,6 +21,8 @@ More sophisticated USB Ruber Ducks with onboard wifi exist, as do ones with full
 
 Since it's possible to just emulate a hub with multiple devices behind it, emulation of a multiple peripherals allows them to do more advanced fun tricks. (Similar to how one dongle can provide both keyboard and mouse.)
 
+* [Explaintioon of the physical USB network with diagram (keil.com)](https://www.keil.com/pack/doc/mw/USB/html/_u_s_b__network.html)
+
 
 ## USB Development
 * TODO: More USB development links.

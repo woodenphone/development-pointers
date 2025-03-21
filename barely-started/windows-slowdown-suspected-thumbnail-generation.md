@@ -44,6 +44,7 @@ Resource Monitor
 ## LEADS
 Leads on what could be causing and how I could solve he problem.
 
+Registry region likely related to JPEG handlers including thumbnail generation: `Computer\HKEY_LOCAL_MACHINE\SOFTWARE\Classes\.jpg\PersistentHandler`
 
 ## Files
 Local files relevant to this topic.

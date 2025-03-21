@@ -241,10 +241,168 @@ git clone https://REPO_URL
 ```
 
 
+## Pushing to multiple remotes
+How to use one command to push to multiple remotes.
+e.g. simultaneously push to homeserver, github, gitgud, etc.
+* TODO: Figure this out.
+
+
+
+gitlab suggested push:
+```bash
+git remote rename origin old-origin
+git remote add origin git@ssh.gitgud.io:Ctrl-S/development-pointers.git
+git push --set-upstream origin --all
+git push --set-upstream origin --tags
+```
+
+git remote add github git@github.com:woodenphone/development-pointers.git
+
+
+## Windows ssh push
+First connect directly to host via putty to accept the host key, then retry git operation.
+
+Message given:
+```
+The server's host key is not cached. You have no guarantee
+that the server is the computer you think it is.
+The server's ssh-ed25519 key fingerprint is:
+ssh-ed25519 255 SHA256:+DiY3wvvV6TuJJhbpZisF/zLDA0zPMSvHdkr4UvCOqU
+If you trust this host, enter "y" to add the key to
+PuTTY's cache and carry on connecting.
+If you want to carry on connecting just once, without
+adding the key to the cache, enter "n".
+If you do not trust this host, press Return to abandon the
+connection.
+Store key in cache? (y/n, Return cancels connection, i for more info)
+```
+
+
+## Push to multiple remotes at once
+* WIP
+* https://stackoverflow.com/questions/14290113/git-pushing-code-to-two-remotes#14290145
+
+
+
+Push to all remotes with one command.
+Use a special remote that points at all remote dests, both public and privately hosted ones.
+
+```bash
+git remote add 
+```
+
+### Examples
+Methods to do the task I found.
+
+Using a special remote with multiple URLs:
+```bash
+git remote add all git://original/repo.git
+git remote -v ## List remotes.
+git config -l | grep '^remote\.all' ## Show config for 'remote.all'
+git remote set-url --add --push all git://another/repo.git
+git remote -v  ## List remotes.
+git config -l | grep '^remote\.all' ## Show config for 'remote.all'
+git remote set-url --add --push all git://original/repo.git
+```
+* Based on: https://stackoverflow.com/questions/14290113/git-pushing-code-to-two-remotes#14290145
+
+
+
+
+
+Useing a git alias:
+```bash
+git config alias.pushall '!git push origin devel && git push github devel'
+```
+* Based on: https://stackoverflow.com/questions/14290113/git-pushing-code-to-two-remotes#14290145
+
+
+
+### setting up multiple push destinations via editing .git/config
+This method I have tested.
+
+Excerpt of the contents of `.git/config`
+```git-config
+[remote]
+	## Override default to push to all remotes
+	## i.e. Make '$ git push' behave like '$ git push pushall'
+	## remote.pushDefault "The remote to push to by default" - git-config(1) manpage
+	pushDefault = pushall
+[remote "pushall"]
+	## Convenience pseudoremote to push to all remotes at once
+	## remote.<name>.url "first is used for fetching, and all are used for pushing" - git-config(1) manpage
+	# url = git://original/repo.git
+	## remote.<name>.pushurl - git-config(1) manpage
+	pushurl = git@github.com:woodenphone/tmux-dump-session.git
+	pushurl = git@ssh.gitgud.io:Ctrl-S/tmux-dump-session.git
+	pushurl = ssh://git@PERSONAL_GIT_SERVER_IP_REDACTED:/~/tmux-dump-session.git
+```
+* [Configuration File git-config(1) manpage](https://git-scm.com/docs/git-config#_configuration_file)
+* [`remote.<name>.url` git-config(1) manpage](https://git-scm.com/docs/git-config#Documentation/git-config.txt-remoteltnamegturl)
+* [`remote.<name>.pushurl` git-config(1) manpage](https://git-scm.com/docs/git-config#Documentation/git-config.txt-remoteltnamegtpushurl)
+* [`remote.pushDefault` git-config(1) manpage](https://git-scm.com/docs/git-config#Documentation/git-config.txt-remotepushDefault)
+
+
+To push to all remotes (explicitly referencing 'pushall' remote):
+```bash
+git push pushall -v
+```
+(`-v` increases verbosity)
+
+To push to all remotes (implicitly due to `remote.pushDefault`):
+```bash
+git push -v
+```
+
+* [Example of ".git/config" file contents](examples/git/dot-git-slash-config.conf)
+
+
+### Links
+Links related to pushing to multiple remotes in one command.
+* https://www.kernel.org/pub/software/scm/git/docs/git-config.html 
+* https://git-scm.com/docs/git-config
+* ["Configuration File" git-config(1) manpage](https://git-scm.com/docs/git-config#_configuration_file)
+* [`remote.<name>.url` git-config(1) manpage](https://git-scm.com/docs/git-config#Documentation/git-config.txt-remoteltnamegturl)
+* [`remote.<name>.pushurl` git-config(1) manpage](https://git-scm.com/docs/git-config#Documentation/git-config.txt-remoteltnamegtpushurl)
+* [`remote.pushDefault` git-config(1) manpage](https://git-scm.com/docs/git-config#Documentation/git-config.txt-remotepushDefault)
+* https://stackoverflow.com/questions/14290113/git-pushing-code-to-two-remotes#14290145
+
+
+----------
+
+
+## Useful informational commands for troubleshooting 
+Show the configuration specific to this repo:
+```bash
+git config --list --local ## Show configuration for this repo (local scope).
+```
+
+Show a list of remotes:
+```bash
+git remote --verbose ## Show remotes for this repo.
+```
+
+How to figure out where config values are coming from.
+```bash
+$ git config --list --show-scope --show-origin ## Show currently active configuration, explicitly listing scope and where the value came from.
+>local   file:.git/config        core.repositoryformatversion=0
+```
+
+* Information on git scopes: https://git-scm.com/docs/git-config#SCOPES
+
+
+
+## Related utils
+Creating git repos from existing codebase history:
+* ["esr/git-weave" "git-weave takes a tarball sequence and a metadata file and synthesizes a live repository. It can invert this, explode git repositories into sequences of per-commit tarballs. The DAG is expressed as a metadata file with mailbox-like entries." (by Eric S. Raymond) (gitlab.com)](https://gitlab.com/esr/git-weave)
+
+
+
+
 ## Files
 Relevant files included in this repo.
 
-<./examples/TODO>
+* [Example of ".git/config" file contents](examples/git/dot-git-slash-config.conf)
 
 
 ## Links
@@ -260,7 +418,7 @@ Relevant files included in this repo.
 
 
 ### Manpages for git
-*[""]()
+*["git(1)" - "git - the stupid content tracker"](https://git-scm.com/docs/git)
 *[""]()
 *[""]()
 
@@ -276,9 +434,15 @@ Relevant files included in this repo.
 
 ### Unsorted links
 *[""]()
-*[""]()
+*["CRLF vs. LF: Normalizing Line Endings in Git"](https://www.aleksandrhovhannisyan.com/blog/crlf-vs-lf-normalizing-line-endings-in-git/)
 
 https://docs.github.com/en/get-started/getting-started-with-git/configuring-git-to-handle-line-endings
 https://docs.github.com/en/get-started/getting-started-with-git/managing-remote-repositories
-
+* https://www.kernel.org/pub/software/scm/git/docs/git-config.html 
+* https://git-scm.com/docs/git-config
+* ["Configuration File" git-config(1) manpage](https://git-scm.com/docs/git-config#_configuration_file)
+* [`remote.<name>.url` git-config(1) manpage](https://git-scm.com/docs/git-config#Documentation/git-config.txt-remoteltnamegturl)
+* [`remote.<name>.pushurl` git-config(1) manpage](https://git-scm.com/docs/git-config#Documentation/git-config.txt-remoteltnamegtpushurl)
+* [`remote.pushDefault` git-config(1) manpage](https://git-scm.com/docs/git-config#Documentation/git-config.txt-remotepushDefault)
+* https://stackoverflow.com/questions/14290113/git-pushing-code-to-two-remotes#14290145
 

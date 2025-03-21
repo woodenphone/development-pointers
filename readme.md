@@ -15,6 +15,11 @@ If you are linking to something in this repo you should use a link referencing t
 
 * TODO: Example link to specific line in file for specific commit.
 
+Due to scope creep, distractions, and so on, many files are barely started with significant amounts of research and writing needing to be done to fill them out.
+Check the sources and validate things here yourself; things are added in haphazardly and there are likely commands and scripts that are incorrect due to hapahazard development.
+
+Most of what's here should be largely right; a decent starting-point to get your things working.
+
 
 ## How to efficiently use this documentation
 * Make use of "Find-in-files" and keywords relating to your topic.

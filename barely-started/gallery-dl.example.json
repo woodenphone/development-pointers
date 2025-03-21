@@ -1,0 +1,84 @@
+{
+	"#": "## ==========< Shared between sites >========== ##",
+		"extractor":
+		{
+			"#": "write tags for several *booru sites",
+			"postprocessors": [
+				{
+					"name": "metadata",
+					"mode": "tags",
+					"whitelist": ["danbooru", "moebooru", "sankaku"]
+				}
+			],
+	"#": "## ==========< /Shared between sites >========== ##",
+	
+	"#": "## ==========< Sites >========== ##",
+	"#": "Per-site extractor config",
+			"deviantart":
+			{
+				"#": "download 'gallery' and 'scraps' images for user profile URLs",
+				"include": "gallery,scraps",
+	
+				"#": "use custom API credentials to avoid 429 errors",
+				"client-id": "98765",
+				"client-secret": "0123456789abcdef0123456789abcdef",
+				"refresh-token": "0123456789abcdef0123456789abcdef01234567",
+				
+				"metadata": true,
+				"comments": true,
+				"comments-avatars": true,
+				"extra": true,
+				"previews": true,
+				"postprocessors": [
+					"#": "put description texts into a separate directory",
+					{
+						"name": "metadata",
+						"mode": "custom",
+						"directory"       : "Descriptions",
+						"content-format"  : "{description}\n",
+						"extension-format": "descr.txt"
+					},
+					{
+						"name": "comments",
+						"mode": "jsonl",
+						"directory"       : "Comments",,
+						"extension-format": "comments.jsonl"
+					}
+				]
+			},
+	
+			"foolfuuka": {
+				"#": "add two other foolfuuka 4chan archives",
+				"fireden-onion": {"root": "http://ydt6jy2ng3s3xg2e.onion"},
+				"scalearchive" : {"root": "https://archive.scaled.team"  }
+			},
+		},
+	"#": "## ==========< /Sites >========== ##",
+	
+		"downloader":
+		{
+			"#": "restrict download speed to 1 MB/s",
+			"rate": "1M",
+	
+			"#": "show download progress indicator after 2 seconds",
+			"progress": 2.0,
+	
+			"#": "retry failed downloads up to 3 times",
+			"retries": 3,
+	
+			"#": "consider a download 'failed' after 8 seconds of inactivity",
+			"timeout": 8.0,
+	
+			"#": "write '.part' files into a special directory",
+			"part-directory": "/tmp/.download/",
+	
+			"#": "do not update file modification times",
+			"mtime": false,
+	
+			"ytdl":
+			{
+				"#": "use yt-dlp instead of youtube-dl",
+				"module": "yt_dlp"
+			}
+		},
+	}

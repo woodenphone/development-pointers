@@ -20,6 +20,7 @@ Links associated with: LTO / Ultrium, LTFS, and related topics.
 * "LTO Tape - Bibliotheca Anonoma" - https://wiki.bibanon.org/LTO_Tape
 * Density codes: "mt(1) manual page" - https://nxmnpg.lemoda.net/1/mt
 * TODO: sg3_utils manpages.
+* [LTFS standards (free pdfs) (SNIA)](https://www.snia.org/tech_activities/standards/curr_standards/ltfs)
 
 
 ### LTO cartridge MAM (Media Acess Memory) RFID/NFC tag
@@ -50,6 +51,7 @@ There's a spec for what a LTO label should look like, with color-coded digits.
 * "piste2750/rpm-ltfs: Spec files for LTFS" - https://github.com/piste2750/rpm-ltfs
 * ["HPE StoreOpen Software"](https://support.hpe.com/connect/s/softwaredetails?language=ja&collectionId=MTX-882b042a6fc04042&tab=releaseNotes)
 * [LTFS on Fedora Linux](https://blog.voina.org/ltfs-on-fc22/)
+
 
 ### LTFS Dependancies
 #### libicu (LTFS dependancy)
@@ -180,6 +182,8 @@ Protocols and specifications relating to tape libraries
 
 ### Tape interchange between entities - (Specifications)
 Tapes getting mailed to another datacenter.
+* https://www.snia.org/sites/default/files/technical-work/ltfs/release/SNIA-LTFS-Bulk-Transfer-1-0.pdf
+* https://www.snia.org/tech_activities/standards/curr_standards/ltfs
 
 
 ## Backup software designed to work with tape

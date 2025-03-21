@@ -39,7 +39,7 @@ python3 -m pip install "unrpa"
 Extracting .rpa files all at once: (In bash on Linux) CHECKME
 ```bash
 cd game/
-python3 -m unrpa ./**.rpa
+python3 -m unrpa --continue-on-error  ./**.rpa
 ```
 
 Installing unrpa: (In Powershell on Windows) CHECKME
@@ -49,9 +49,13 @@ py -m pip install unrpa
 
 Extracting .rpa files all at once: (In Powershell on Windows)
 ```powershell
-py -m unrpa (get-item .\*.rpa)
+py -m unrpa --continue-on-error  (get-item .\*.rpa)
 ```
 
+Extracting .rpa files all at once: (In Powershell on Windows)
+```powershell
+PS D:\Path\to\GameDir\game>  py -m unrpa --continue-on-error (get-item .\*.rpa)
+```
 
 ### Enabling rollback in RenPy
 * TODO: Figure out method to enable rollback. (TODO: Split topic off into seperate file)

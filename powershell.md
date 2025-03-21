@@ -7,6 +7,12 @@
 
 
 ## General Powershell
+
+Show Powershell Version:
+```powershell
+$PSVersionTable
+```
+
 ### Installing / Updating powershell
 * TODO: Installing latest version.
 
@@ -219,6 +225,28 @@ netsh wlan disconnect
 * ["Netsh Mobile Broadband Network commands"](https://learn.microsoft.com/en-us/windows-server/networking/technologies/netsh/netsh-mbn)
 
 
+## Loading DLLs in Powershell
+Example:
+```powershell
+$DrawingGraphics = [Drawing.Graphics]::FromImage($ScreenshotObject)
+```
+Genric form:
+```powershell
+$ResultObject = [NamespacedAPI]::Method(Arguments)
+```
+* ["Add-Type" - "Adds a Microsoft .NET class to a PowerShell session." (learn.microsoft.com)](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/add-type?view=powershell-7.5)
+* ["Add-Type" "Example 4: Call native Windows APIs" (learn.microsoft.com)](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/add-type?view=powershell-7.5#example-4-call-native-windows-apis)
+* ["about_Using" - "Allows you to specify namespaces to use in the session." (learn.microsoft.com)](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_using?view=powershell-7.5)
+* ["about_Using" "Example - Add namespaces for typename resolution" (learn.microsoft.com)](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_using?view=powershell-7.5#example---add-namespaces-for-typename-resolution)
+* ["Use DLL files in PowerShell"](https://tekcookie.com/use-dll-files-in-powershell/)
+* Also examples of using DLL / dotnet in powershell: ["JocysCom/FocusLogger/blob/main/Solution_Cleanup.ps1"](https://github.com/JocysCom/FocusLogger/blob/main/Solution_Cleanup.ps1)
+
+Examples of using inline csharp: 
+* ["PowerSploit - A PowerShell Post-Exploitation Framework" "github:PowerShellMafia/PowerSploit"](https://github.com/PowerShellMafia/PowerSploit)
+* ["Get-TimedScreenshot.ps1" "github:PowerShellMafia/PowerSploit"](https://github.com/PowerShellMafia/PowerSploit/blob/master/Exfiltration/Get-TimedScreenshot.ps1) (Pertinent lines of "Get-TimedScreenshot.ps1" (lines 72-75))[https://github.com/PowerShellMafia/PowerSploit/blob/d943001a7defb5e0d1657085a77a0e78609be58f/Exfiltration/Get-TimedScreenshot.ps1#L72C8-L72C75]
+
+----------
+
 
 ## Links
 * TODO: Copy bookmark links to here.
@@ -245,7 +273,7 @@ Documentation produced or published by Microsoft specifically about Powershell.
 * ["about_Operators" (learn.microsoft.com)](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_operators?view=powershell-7.4)
 * ["ForEach-Object" (learn.microsoft.com)](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/foreach-object?view=powershell-7.4)
 * ["ConvertTo-Json" (learn.microsoft.com)](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/convertto-json?view=powershell-7.4)
-
+* ["Add-Type" (learn.microsoft.com)](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/add-type?view=powershell-7.5)
 
 ### Official Microsoft documentation - adjactent (Links)
 Documentation produced or published by Microsoft not directly pertaining to Powershell.
@@ -284,7 +312,7 @@ Quite a useful resource for finding tricks and ways to do tasks.
 ### Unsorted links
 
 * [List of Windows DLLs](https://gist.github.com/Samirbous/9f9c3237a0ada745e71cc2ba3425311c)
-
-
+* https://docs.microsoft.com/en-gb/windows/win32/api/winuser/
+* https://github.com/JocysCom/FocusLogger/blob/7539d82252b17d87ecc3272f352878795d1be117/FocusLogger/Common/NativeMethods.cs#L18
 
 
