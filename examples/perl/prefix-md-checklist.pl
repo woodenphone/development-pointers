@@ -9,4 +9,4 @@ use strict;
 use warnings;
 use v5.35;
 
-$_ =~ /^(?<filepath>[^\/]+?:)/ && printf("- [ ] `$filepath`\n");
+$_ =~ /^(?<filepath>[^\)]+?:))/ && printf("- [ ] `$filepath`\n");

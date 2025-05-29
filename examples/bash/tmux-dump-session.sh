@@ -286,7 +286,11 @@ tar_params=(
 tar "${tar_params[@]}"
 
 printf '\n%s\n' "[${0##*/}] Produced tarball: ( tar_filename=${tar_filename@Q} )" >&2
-( set -x; ls -lnhQF "${tar_filename?}" ) >&2 # Subshell with set -x to print the command being run.
+( set -x; date -Is; 
+    pwd; 
+    realname "${tar_filename?}"; 
+    ls -lnhQF "${tar_filename?}";
+) >&2 # Subshell with set -x to print the command being run.
 echo "" >&2
 ## ==========< /Bundle files >========== ##
 
@@ -294,11 +298,11 @@ echo "" >&2
 ## ==========< Cleanup >========== ##
 # printf '%s\n\n' "[${0##*/}] ---------- Cleaning up ----------" >&2
 # echo "[${0##*/}]" "Removing temporary work dir" "( tmpdir=${tmpdir@Q} )" >&2
-rm -f "${tmpdir?}"/* >&2
+rm --force --recursive --one-file-system -- "${tmpdir?}" >&2
 rmdir "${tmpdir?}" >&2
 ## ==========< /Cleanup >========== ##
 
-echo "[${0##*/}]" "Script finished" "at $(date -Is)" >&2
+echo "[${0##*/}] Script finished (at $(date -Is)), script took $(( ${SECONDS?} / 86400 ))d $(( ${SECONDS?} / 3600 ))h $(( (${SECONDS?} / 60) % 60 ))m $(( ${SECONDS?} % 60 ))s (${SECONDS?} seconds total) to complete" >&2
 exit 0 # Success.
 ## ======================================== ##
 ## Docufooter (Unreachable heredoc)

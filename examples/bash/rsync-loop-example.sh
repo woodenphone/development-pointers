@@ -38,7 +38,7 @@
 ## LICENSE: GPLv3
 ## Author: Ctrl-S
 ## Created: 2024-05-30
-## Modified: 2024-11-04
+## Modified: 2025-05-26
 ## ======================================== ##
 # set -x # Print statements as they are interpreted (bash option).
 # set -v # Print lines as they are run (bash option).
@@ -79,7 +79,7 @@ rsync_params=( ## Prepare cmd/params as array to permit commenting, logging, etc
 	# --verbose
 	# --progress
 	# --human-readable
-	--info=stats1,progress2 ## Only display progress and end of run stats.	
+	--info="stats1,progress2" ## Only display progress and end of run stats.	
 	# --info=STATS ## Show stats at end of run. ( see $ rsync --info=help )
 	## Use partial files to allow resuming and avoid invalid files: ---------- ----------
 	--partial
@@ -90,6 +90,7 @@ rsync_params=( ## Prepare cmd/params as array to permit commenting, logging, etc
 	# --filter="-! PATTERN_HERE*" ## Only transfer files matching pattern.
 	## Network params: ---------- ----------
 	--rsh="ssh -p 22" ## Connect using ssh on specified port. (This is where the security comes from.)
+	# --rsync-path="sudo rsync" ## Command to execute on remote side. ('sudo rsync' to run rsync as root)	
 	--bwlimit=10000 ## In KB/sec.
 	# --compress ## Uses more CPU, situationally useful.
 	## Source: ---------- ----------

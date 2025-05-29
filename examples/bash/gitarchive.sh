@@ -7,7 +7,7 @@
 ## LICENSE: BSD
 ## AUTHOR: Ctrl-S
 ## CREATED: 2023-03-04
-## MODIFIED: 2025-03-18
+## MODIFIED: 2025-05-11
 ## ======================================== ##
 
 
@@ -35,21 +35,52 @@ PS4='+ $LINENO: ' # Print line number in xtrace.
 ## Functions share parent scope for variables; 
 ## 'local' keyword is required to prevent overwriting variables outside the function.
 
-fn_dedupe_string_array(){ ## WIP
+fn_dedupe_string_array(){
 	## Dedupe a specified array of strings, outputting the deduped values to a specified array.
-	## ======================================== ##
+	## ---------------------------------------- ##
+	## Function USAGE:
+	## argv=() ## Allocate dest array in parent scope.
+	## fn_dedupe_string_array script_argv argv ## Call function with varnames of two arrays.
+	## ---------------------------------------- ##
 	## SOURCES:
 	## * https://stackoverflow.com/questions/10582763/how-to-return-an-array-in-bash-without-using-globals
 	## * https://stackoverflow.com/questions/54797475/how-to-remove-duplicate-elements-in-an-existing-array-in-bash
-	## ======================================== ##
+	## ---------------------------------------- ##
 	local -n srcArray="${1?}" ## Name of array variable to read from. (via nameref)
 	local -n destArray="${2?}" ## Name of array variable to create. (via nameref)
-	echo "#[${0##*/}] Deduping array named ${1@Q} to dest named ${2@Q}" >&2
+	echo "[${0##*/}] Deduping array named ${1@Q} to dest named ${2@Q}" >&2
 	local x ## Prevent clobbering other scopes.
 	while IFS= read -r -d '' x
 	do
-	    destArray+=("${x?}") ## Append element to results.
-	done < <(printf "%s\0" "${srcArray[@]}" | sort -uz)
+		destArray+=("${x?}") ## Append element to results.
+	# done < <(printf "%s\0" "${srcArray[@]}" | sort -uz)
+		## https://unix.stackexchange.com/questions/131217/how-to-remove-duplicate-lines-with-awk-whilst-keeping-all-empty-lines
+		## https://stackoverflow.com/questions/1444406/how-to-delete-duplicate-lines-in-a-file-without-sorting-it-in-unix
+		## Discard lines not added to array 'seen'
+	done < <(printf "%s\0" "${srcArray[@]}" | gawk 'BEGIN { RS="\0"; ORS = "\0"; } !seen[$0]++')
+	
+}
+
+fn_sleep_between_jobs() {
+	## Contain logic to do sleep between jobs.
+	## ---------------------------------------- ##
+	## If not first item, sleep before running:
+	if [[ -z "${timer_pre:-}" ]]; then 
+		## Is it first cycle?
+		sleep_duration="0" ## Don't sleep before first task.
+	elif [[ -z "${SLEEP_FOR_LAST_TASK_DURATION:-}" ]]; then
+		## If $SLEEP_FOR_LAST_TASK_DURATION is not set to a number then use duration of previous task as inter-task delay.
+		## Sleep however long last task took, plus 10 seconds, max 10 mins:
+		sleep_duration=$(( ${timer_post?} - ${timer_pre?} )) ## Calculate duration of previous task.
+	else
+		## Sleep fixed duration from config var:
+		sleep_duration="${interval_between_jobs:-30}"
+	fi
+	## Restrict sleep time to within boundaries:
+	if [[ ${sleep_duration?} -lt ${SLEEP_MINIMUM:-10} ]] then sleep_duration=$SLEEP_MINIMUM; fi
+	if [[ ${sleep_duration?} -gt ${SLEEP_MAXIMUM:-10} ]] then sleep_duration=$SLEEP_MAXIMUM; fi
+	echo "[${0##*/}] sleeping for ${sleep_duration@Q} secs" >&2
+	sleep "${sleep_duration:-30}"
 }
 
 pfx() {
@@ -149,7 +180,7 @@ fn_git_download() {
 		"${repo_url?}" 
 		"${job_dir?}" 
 	)
-	echo "#[${0##*/}] git_params=( ${git_params[@]@Q} )" | tee "${tmpdir?}/git-clone.args" >&2
+	echo "[${0##*/}] git_params=( ${git_params[*]@Q} )" | tee "${tmpdir?}/git-clone.args" >&2
 	## Retry download on failure:
 	for ((attempt_counter=0; attempt_counter < ${CLONE_MAX_ATTEMPTS:-10}; attempt_counter++)); do
 		echo "[${0##*/}] attempt ${attempt_counter@Q} of max ${CLONE_MAX_ATTEMPTS@Q}." >&2
@@ -172,11 +203,11 @@ fn_git_download() {
 		## ====< Check exit status >===== ##
 		case ${git_exit_status?} in
 			0 ) ## "0 - Success" -> Finished.
-				echo "#[${0##*/}]" "0 - Success" "(break from loop)" >&2
+				echo "[${0##*/}]" "0 - Success" "(break from loop)" >&2
 				break ## Done with loop.
 			;;
 			* ) ## Any other exit status -> die for safety.
-				echo "#[${0##*/}]" "Unhandled exit status" "exit code was ${git_exit_status@Q}" "(Retry)" >&2
+				echo "[${0##*/}]" "Unhandled exit status" "exit code was ${git_exit_status@Q}" "(Retry)" >&2
 				if [[ ${attempt_counter?} -ge ${CLONE_MAX_ATTEMPTS?} ]]; then
 					echo "[${0##*/}] Maximum attempts reached, aborting. ( attempt_counter=${attempt_counter@Q}; CLONE_MAX_ATTEMPTS=${CLONE_MAX_ATTEMPTS@Q}; repo_url=${repo_url?};" >&2
 					exit 1 ## Give up and exit script.
@@ -246,7 +277,7 @@ fn_bundle_results() {
 		'.' # Wildcard to match all contents of dir.
 		
 	)
-	echo "#[${0##*/}] tar_params=( ${tar_params[@]@Q} )" >&2
+	echo "[${0##*/}] tar_params=( ${tar_params[@]@Q} )" >&2
 	tar "${tar_params[@]}"
 	md5sum --tag "${archive_file?}" | tee -a "${archive_hash_file?}" >&2
 	## ====< /Bundle >===== ##
@@ -295,6 +326,8 @@ GITARCHIVE_HISTORY_COMPLETED_FILE="${HOME?}/.gitarchive.sh.history.completed" ##
 output_basedir="$HOME/git-archiving"
 interval_between_jobs=120
 SLEEP_FOR_LAST_TASK_DURATION=0 # If not null then use duration of previous task as inter-task delay.
+SLEEP_MINIMUM=10 ## Minimum delay between jobs (Time in seconds).
+SLEEP_MAXIMUM=600 ## Maximum delay between jobs (Time in seconds).
 BASE_RETRY_DELAY_SECONDS=120
 CLONE_MAX_ATTEMPTS=10
 CLONE_MAX_EXPONENTIAL_BACKOFF_SECONDS=600
@@ -303,10 +336,11 @@ CLONE_MAX_EXPONENTIAL_BACKOFF_SECONDS=600
 
 ## ==========< Main loop >========== ##
 script_argv=("$@") # Argument values.
+script_argc=$#
 ## Recoord script params:
 echo "timestamp=$(date -u +%Y-%m-%dT%H%M%S%z); script_argv=(${script_argv[*]@Q});" | tee -a "${GITARCHIVE_HISTORY_ARGS_FILE:-/dev/null}" > /dev/null
 ## Dedupe script params:
-echo "#[${0##*/}] Deduping script params" >&2
+echo "[${0##*/}] Deduping script params" >&2
 argv=() ## Populated by dedupe func.
 fn_dedupe_string_array script_argv argv
 ## Iterate over params:
@@ -314,18 +348,7 @@ argc="${#argv[@]}" ## Arugment count.
 echo "[${0##*/}] Processing copied arguments: argc=${argc?}; argv=(${argv[*]@Q});" >&2 ## Print params.
 for ((argn = 0 ; argn < ${argc?} ; argn++)); do
 	arg_value="${argv[$argn]?}" # Current param value.
-	## If not first item, sleep before running:
-	if [[ "${argn}" -gt 0 ]]; then ## Is it first cycle?
-		: ## Noop - Don't sleep before first task.
-	elif [[ -z "${SLEEP_FOR_LAST_TASK_DURATION:-}" ]]; then
-		## Sleep however long last task took:
-		sleep_duration=$(( ${timer_post?} - ${timer_pre?} )) ## Calculate duration of previous task.
-		echo "[${0##*/}] sleep_duration=${sleep_duration@Q}" >&2
-		sleep "${sleep_duration:-30}"
-	else
-		## Sleep fixed duration from config var:
-		sleep "${interval_between_jobs:-30}"
-	fi
+	fn_sleep_between_jobs
 	echo "[${0##*/}] Processing arg: argn=${argn?};" "arg_value=${arg_value@Q};" >&2 ## Print params.
 	timer_pre="${SECONDS}"
 	fn_gitarchive "${arg_value?}"

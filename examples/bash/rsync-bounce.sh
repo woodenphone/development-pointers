@@ -1,9 +1,11 @@
 #!/bin/bash
 ## rsync-bounce.sh
 ## Rsync via ssh using a proxy bounce server.
+## ======================================== ##
 ## AUTHOR: Ctrl-S
 ## CREATED: 2021-12-16
-## MODIFIED: 2021-12-16
+## MODIFIED: 2025-05-26
+## ======================================== ##
 
 echo "#[${0##*/}]" "Start"
 
@@ -28,7 +30,7 @@ rsync_args=( # Complex args as array for readability + comments.
 	"/DEST"
 	)
 
-echo "#[${0##*/}] \$ rclone ${rsync_args[@]}" ## Print invocation.
+echo "#[${0##*/}] Command:\$ rsync ${rsync_args[*]@Q}" ## Print invocation.
 
 rsync "${rsync_args[@]}" ## Run rsync using array of arguments.
 

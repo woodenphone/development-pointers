@@ -73,6 +73,7 @@ echo "[${0##*/}] tar_args=(${tar_args[*]@Q});" # Scriptname message prefix follo
 
 ----------
 
+
 Printf `%q` format option with array expanded to become parameters of printf
 ```bash
 builtin printf '"%q" ' "$tar_args[@]" # TESTME
@@ -85,11 +86,189 @@ echo "#[${0##*/}]" "tar_args:" "$( builtin printf '"%q" ' "$tar_args[@]" )"
 ----------
 
 
+### Check bash version (to validate assumptions)
+Test if bash version is recent enough for your script:
+```bash
+echo "Bash version is ${BASH_VERSINFO:-0}" >&2
+if [[ ! "${BASH_VERSINFO:-0}" -le 4 ]]; then { 
+	echo "Error: Bash version below minimum supported; requires 4, found ${BASH_VERSINFO:-0}." >&2; 
+	exit 1; 
+}; else { 
+	echo "Bash version is ok." >&2; 
+}; fi
+
+```
+
+As a oneliner:
+```bash
+if [[ ! "${BASH_VERSINFO:-0}" -le 4 ]]; then { echo "Error: Bash version below minimum supported; requires 4, found ${BASH_VERSINFO:-0}." >&2; exit 1; }; else { echo "Bash version is ok." >&2; }; fi
+
+```
+----------
+
+
+
+### Tolerate nonzero status
+Useful if you want to use `set -o errexit` in your script.
+
+Using a lazy-or and a noop:
+```bash
+smartctl --info /dev/sda || :
+```
+
+Using a lazy-or and `/bin/true`:
+```bash
+smartctl --info /dev/sda || /bin/true
+```
+
+Using a lazy-or and `true`:
+```bash
+smartctl --info /dev/sda || true
+```
+
+
+
+### Print commands via subshell
+Way to record the invocation for a command alongside its output.
+
+```bash
+:  $( set -x; ls -lahQF $PWD ) 2>&1 | tee -a "${log:/dev/null}" >&2
+```
+
+Explaination:
+- `:`  Noop so subshell result does not get interpreted as command.
+- `$( set -x; ls -lahQF $PWD )` Subshell that passes back out its STDOUT
+ - ` 2>&1 | ` Redirecing STDERR into STDOUT so messages can travel through pipe.
+- `COMMAND | tee -a "${log:/dev/null}" >&2` Record STDOUT sent into pipe to logfile and STDERR
+ - `tee -a FILE` to append a copy of STDIN to a file, creating it if it does not exist.
+ - `${log:/dev/null}"` to use contents of variable `$log`, or if that is unset/null/empty, use `/dev/null` as the value to safely discard the data instead of crashing script.
+ - `COMMAND >&2` Redirecting STDOUT of tee to STDERR so it can propogate out to user and keep STDOUT available for sending data around.
+
+
+Real example:
+```bash
+## Display ls command and its result:
+: $(set -x; date -Is; ls -lahQZF "${archive_pathpfx?}"* ) # noop subshell to print command.
+```
+
+
+More complex real example:
+```bash
+## (noop xtrace Subshell used to display actial commands and their output for capture.)
+: $( PS4=' $ '; set +x; 
+	date +@%s; 
+	date; 
+	date -u -Is; 
+	date -Is; 
+	date -u '+%Y-%m-%dT%H-%M-%S%z'; 
+	date '+%Y-%m-%dT%H-%M-%S%z'; 
+	date '+%Z %z';
+) 2>1 > "${hostinfo_dir?}/date.txt"
+```
+
+
+### printf tricks
+
+- https://www.man7.org/linux/man-pages/man1/printf.1.html
+- https://www.man7.org/linux/man-pages/man3/printf.3.html
+- https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-printf
+
+
+Setting a var using bash builtin printf:
+```bash
+## printf [-v var] format [arguments]
+$ printf -v my_var '$s $s $s\n' "" "$SECONDS" "" ## Implicitly using builtin.
+$ builtin printf -v my_var '$s $s $s\n'  ## Explicitly using builtin.
+
+$ echo "${my_var}"
+```
+
+### Padding
+
+```bash
+bar="$(dd if=/dev/zero bs=1 count=40 | tr '\0' '=') ##" ## Bar.
+```
+
+```bash
+bar="$(head -n 40 /dev/zero | tr '\0' '=') ##" ## Bar.
+```
+
+----------
+
+
+### Creating a slug / slugification
+
+Simple removal of invalid chars:
+```bash
+disk_name_slug="$( printf '%s\n' "${raw_disk_name_string?}" | tr --complement --delete '[:alnum:]-_.' )" ## Slugify (remove unsafe chars)
+```
+
+Remove invalid chars and truncate to no longer than 255 bytes:
+```bash
+disk_name_slug="$( printf '%s\n' "${raw_disk_name_string?}" | tr --complement --delete '[:alnum:]-_.' )" | cut -c1-255 - ## Slugify (remove unsafe chars)
+```
+
+
+Example use in semiautomated disk image creator.
+```bash
+## ===== Autoname ===== ##
+## Info about disk:
+## ex: '$ findmnt --noheadings --output=FSTYPE,LABEL,PARTLABEL,UUID --source=/dev/sdh1'
+raw_disk_name="$(findmnt --noheadings --output='FSTYPE.LABEL.PARTLABEL.UUID' --source=${target_partition_device})"
+
+disk_name_slug="$( printf '%s\n' "${raw_disk_name_string?}" | tr --complement --delete '[:alnum:]-_.' )" ## Slugify (remove unsafe chars)
+
+outfile="${disk_name_slug?}.${run_timestamp?}.dd-img.gz"
+## ===== /Autoname ===== ##
+
+echo "Imaging source_device=${source_device@Q} to outfile=${outfile@Q}" >&2
+
+## Create compressed partition image:
+dd if="${source_device?}" | gzip | tee >(md5sum > "${outfile?}.md5") > "${outfile?}"
+```
+
+----------
+
+
+Create a slug for one path segment (dir/file name):
+```bash
+fn_slugify_example() {
+	## Basic slugify function intended for creating path segments.
+	## - Coerce to ASCII.
+	## - Constrained to [a-zA-Z0-9-_] 
+	## - Slug size constrained to 255 bytes.
+	## * https://www.man7.org/linux/man-pages/man1/tr.1.html
+	## * https://www.man7.org/linux/man-pages/man1/cut.1.html
+	printf "%s\n" "${1?}" \
+		| iconv -t 'ascii//TRANSLI' \
+		| tr --complement '[:alnum:]-_' \
+		| cut -c1-255 -
+}
+my_input="some_arbitrary_string...%#@ exec exit 1; }..." # Untrusted input.
+dir_name="$(fn_slugify_pathseg ${my_input})" # Convert to slug.
+```
+----------
+
+
+### End of script total duration message
+
+```bash
+echo "[${0##*/}] Script finished (at $(date -Is)) and took $((${SECONDS?} / 86400))d $((${SECONDS?} / 3600))h $(((${SECONDS?} / 60) % 60))m $((${SECONDS?} % 60))s (${SECONDS?} seconds total) to complete" >&2
+```
+
+`${0##*/}` gives the script's filename by 'slicing' the path to the script at the rightmost '/'.
+
+`$(date -Is)` gives the ISO-8601 standard date and time to a 1-second precision.
+
+`$SECONDS` is a shell builtin variable which counts up from when the script/shell was started.
+
+Dividing `$SECONDS` can be used to produce minutes, hours, days, etc.
+----------
+
+
 ## Files in this repo
 Dirs and files to check out in this same repo.
 * ["/examples/bash/" Example bash scripts.](/examples/bash/)
-
-
 
 
 ## Links
@@ -139,6 +318,18 @@ e.g. WTF does indirection do and how can it help me?
 * ["PAGE manpage" "SYNPOPSIS"](LINK)
 *
 
+### Guides at mywiki.wooledge.org
+Useful level of detail.
+- [""]()
+
+* Cheatsheet ["Bash Reference Sheet"](https://mywiki.wooledge.org/BashSheet)
+* [BashGuide/Arrays](https://mywiki.wooledge.org/BashGuide/Arrays)
+- [BashFAQ - "BASH Frequently Asked Questions"](https://mywiki.wooledge.org/BashFAQ)
+- [BashFAQ/005 - "How can I use array variables?"](https://mywiki.wooledge.org/BashFAQ/005)
+- [BashPitfalls - "Bash Pitfalls"](https://mywiki.wooledge.org/BashPitfalls)
+- [BashProgramming - "Bash Programming"](https://mywiki.wooledge.org/BashProgramming)
+- [UnixFaq- "Unix Frequently Asked Questions"](https://mywiki.wooledge.org/UnixFaq)
+
 
 ### Unsorted links
 * ["List of applications" (Arch wiki)](https://wiki.archlinux.org/title/List_of_applications)
@@ -157,7 +348,6 @@ e.g. WTF does indirection do and how can it help me?
   [GNU "gettext" homepage](https://www.gnu.org/software/gettext/)
   [GNU "gettext" manual (One page per node HTML format)](https://www.gnu.org/software/gettext/manual/html_node/index.html>
   [GNU "gettext" manual (single-page HTML)](https://www.gnu.org/software/gettext/manual/gettext.html)
-* 
 
 
 

@@ -4,6 +4,13 @@
 
 ## Installing WSL
 * TODO: WSL setup / link
+
+* ["How to install Linux on Windows with WSL" (learn.microsoft.com)](https://learn.microsoft.com/en-us/windows/wsl/install)
+To install WSL: (In Administrator Powershell):
+```powershell
+wsl --install
+```
+
 List available distros to install:
 ```powershell
 wsl --list --online

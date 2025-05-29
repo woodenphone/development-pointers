@@ -40,7 +40,7 @@
 ## ======================================== ##
 ## Author: Ctrl-S
 ## Created: 2023-04-18
-## Modified: 2024-11-04
+## Modified: 2025-05-26
 ## ======================================== ##
 
 
@@ -109,7 +109,7 @@ for (( i=0; i<=${max_retries?}; i++ )); do
 		# --verbose ## "increase verbosity"
 		# --progress ## "show progress during transfer"
 		# --human-readable ## "output numbers in a human-readable format"
-		--info=stats1,progress2 ## Only display progress and end of run stats.	
+		--info="stats1,progress2" ## Only display progress and end of run stats.	
 		# --info=STATS ## Show stats at end of run. ( see $ rsync --info=help )
 		## Use partial files to allow resuming and avoid invalid files: ---------- ----------
 		--partial
@@ -121,6 +121,7 @@ for (( i=0; i<=${max_retries?}; i++ )); do
 		# --filter="-! PATTERN_HERE*" ## Only transfer files matching pattern.
 		## Network params: ---------- ----------
 		--rsh="ssh -p 22" ## Connect using ssh on specified port. (This is where the security comes from.)
+		# --rsync-path="sudo rsync" ## Command to execute on remote side. ('sudo rsync' to run rsync as root)
 		--bwlimit=10000 ## Throttle network use (In KB/sec).
 		# --compress ## Uses more CPU, situationally useful.
 		## Source: ---------- ----------
