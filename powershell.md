@@ -248,6 +248,13 @@ Examples of using inline csharp:
 ----------
 
 
+## Files
+Files in this repo relating to PowerShell.
+
+- Powershell example scripts dir ["examples/powershell"](<##/examples/powershell>)
+- Script to hash files it's pointed at, intended to make notekeeping easier: ["hash-files.ps1"](<##/examples/powershell/hash-files.ps1>)
+
+
 ## Links
 * TODO: Copy bookmark links to here.
 * TODO: Copy links from my other documentation to here.
@@ -274,6 +281,28 @@ Documentation produced or published by Microsoft specifically about Powershell.
 * ["ForEach-Object" (learn.microsoft.com)](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/foreach-object?view=powershell-7.4)
 * ["ConvertTo-Json" (learn.microsoft.com)](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/convertto-json?view=powershell-7.4)
 * ["Add-Type" (learn.microsoft.com)](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/add-type?view=powershell-7.5)
+
+- ["about_operators"](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_operators?view=powershell-7.5)
+- ["about_logical_operators"](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_logical_operators?view=powershell-5.1)
+- ["about_comparison_operators"](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_comparison_operators?view=powershell-7.5)
+
+- ["about_hash_tables"](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_hash_tables?view=powershell-7.5)
+
+- ["where-object"](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/where-object?view=powershell-5.1)
+- ["get-childitem"](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.management/get-childitem?view=powershell-7.5)
+
+- ["about_filesystem_provider"](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_filesystem_provider?view=powershell-7.5)
+- ["about_registry_provider"](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_registry_provider?view=powershell-7.5)
+
+- ["join-path"](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.management/join-path?view=powershell-7.5)
+
+- ["TITLE"](LINK)
+- ["TITLE"](LINK)
+- ["TITLE"](LINK)
+- ["TITLE"](LINK)
+- ["TITLE"](LINK)
+- ["TITLE"](LINK)
+
 
 ### Official Microsoft documentation - adjactent (Links)
 Documentation produced or published by Microsoft not directly pertaining to Powershell.
@@ -315,4 +344,6 @@ Quite a useful resource for finding tricks and ways to do tasks.
 * https://docs.microsoft.com/en-gb/windows/win32/api/winuser/
 * https://github.com/JocysCom/FocusLogger/blob/7539d82252b17d87ecc3272f352878795d1be117/FocusLogger/Common/NativeMethods.cs#L18
 
+- `Resolve-Path -Relative` https://stackoverflow.com/questions/12396025/how-to-convert-absolute-path-to-relative-path-in-powershell
+- Capture output of program as array of strings: `[string[]] $MyArray = Command;` https://stackoverflow.com/questions/8097354/how-do-i-capture-the-output-into-a-variable-from-an-external-process-in-powershe
 

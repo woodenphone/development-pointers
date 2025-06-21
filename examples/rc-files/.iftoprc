@@ -1,0 +1,17 @@
+#!iftop
+## ~/.iftoprc
+## Config for iftop
+interface: eno1
+dns-resolution: no
+port-resolution: no
+show-bars: yes
+bandwidth-unit: bytes
+link-local: no
+hide-source: yes
+hide-destination: yes
+show-totals: yes
+port-display: off
+#filter-code: not broadcast and not multicast and ( (outbound and (not dst net 10.0.0.0/8 or dst net 172.16.0.0/20 or dst net 192.168.0.0/16)) or (inbound and (not src net 10.0.0.0/8 or src net 172.16.0.0/20 or src net 192.168.0.0/16)) )
+filter-code: tcpdump -i eno1 outbound and (not dst net 10.0.0.0/8 or dst net 172.16.0.0/20 or dst net 192.168.0.0/16) inbound and (not src net 10.0.0.0/8 or src net 172.16.0.0/20 or src net 192.168.0.0/16)
+
+

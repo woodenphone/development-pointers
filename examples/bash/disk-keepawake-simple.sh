@@ -9,7 +9,7 @@
 ## LICENSE: BSD
 ## AUTHOR: Ctrl-S
 ## CREATED: 2025-05-01
-## Modified: 2025-05-01
+## Modified: 2025-06-16
 ## ======================================== ##
 
 echo "[${0##*/}] Starting, targeting device ${1@Q} (at $(date -Is))" >&2
@@ -24,7 +24,7 @@ while true; do
 	## https://www.man7.org/linux/man-pages/man1/dd.1.html
 	## https://www.gnu.org/software/coreutils/manual/html_node/dd-invocation.html
 	## Read 1KiB data from the disk:
-	dd "if=${1?}" "of=/dev/null" "iflag=nocache" "ibs=1K" "iseek=${offset?}" "count=1"
+	dd "if=${1?}" "of=/dev/null" "iflag=nocache" "ibs=1K" "seek=${offset?}" "count=1"
 	## Reasons for flags:
 	## nocache - Re-read from disk instead of using cache, while not clobbering anything.
 done

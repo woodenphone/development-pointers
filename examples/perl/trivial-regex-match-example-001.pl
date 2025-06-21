@@ -1,4 +1,4 @@
-#!/usr/bin/env perl -lan
+#!/usr/bin/env -S perl -lan
 ## trivial-regex-match-example-001.pl
 ## Print the line matching the pattern (like grep).
 ## ==================================== ##

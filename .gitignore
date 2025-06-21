@@ -1,0 +1,21 @@
+## .gitignore
+## Repo-level gitignore file.
+## ======================================== ##
+## https://www.git-scm.com/docs/
+## ======================================== ##
+
+git-ignored/
+
+## ----------< Editor-related >---------- ##
+## Exclude rules relating to editors.
+## VSCode:
+*.code-workspace
+.vscode/
+## ----------< /Editor-related >---------- ##
+
+
+## ----------< Explicit includes >---------- ##
+## Override gitignore rules that might interfere with this repo's files.
+## Example dotfiles should be included in repo.
+!examples/**/*.*
+## ----------< Explicit includes >---------- ##
