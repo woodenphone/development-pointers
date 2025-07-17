@@ -225,6 +225,23 @@ netsh wlan disconnect
 * ["Netsh Mobile Broadband Network commands"](https://learn.microsoft.com/en-us/windows-server/networking/technologies/netsh/netsh-mbn)
 
 
+#### Finding devices - COM ports
+Getting a list of serial / parllel / COM ports in windows Powershell.
+
+By type `Win32_SerialPort`:
+```powershell
+Get-WmiObject Win32_SerialPort | Select-Object deviceid
+```
+
+By ClassGuid:
+```powershell
+$lptAndCom = '{4d36e978-e325-11ce-bfc1-08002be10318}'
+get-wmiobject -Class win32_pnpentity | where ClassGuid -eq $lptAndCom | select name
+```
+- Methods found at: https://stackoverflow.com/questions/40370167/list-of-all-com-ports-shown-in-device-manager-by-using-powershell
+- List of ClassGuid values: https://learn.microsoft.com/en-us/windows-hardware/drivers/install/system-defined-device-setup-classes-available-to-vendors
+
+
 ## Loading DLLs in Powershell
 Example:
 ```powershell
